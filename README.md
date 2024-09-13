@@ -1,2 +1,3 @@
 # python-scripts
-Python scripts for everything
+
+- **EncodeB64_file.py**: Encode all the lines of a file to base64

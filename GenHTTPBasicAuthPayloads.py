@@ -1,28 +1,31 @@
 import base64
+import sys
 
 def encode_base64(data):
     return base64.b64encode(data.encode('utf-8')).decode('utf-8')
 
 def read_file(filename):
     with open(filename, 'r') as f:
-        return [line.strip() for line in f.readlines()]
+        return [line.strip() for line in f if line.strip()]
 
 def generate_combinations(usernames_file, passwords_file, output_file):
     usernames = read_file(usernames_file)
     passwords = read_file(passwords_file)
 
-    encoded_combinations = []
+    with open(output_file, 'w') as out:
+        for username in usernames:
+            for password in passwords:
+                combo = f"{username}:{password}"
+                encoded = encode_base64(combo)
+                out.write(encoded + "\n")
 
-    for username in usernames:
-        for password in passwords:
-            combination = f"{username}:{password}"
-            encoded_combination = encode_base64(combination)
-            encoded_combinations.append(encoded_combination)
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python script.py <usernames_file> <passwords_file> <output_file>")
+        sys.exit(1)
 
-    with open(output_file, 'w') as f:
-        for encoded in encoded_combinations:
-            f.write(encoded + '\n')
+    usernames_file = sys.argv[1]
+    passwords_file = sys.argv[2]
+    output_file = sys.argv[3]
 
-    print(f"[+] File {output_file} successfully created.")
-
-generate_combinations('usernames.txt', 'passwords.txt', 'payloads.txt')
+    generate_combinations(usernames_file, passwords_file, output_file)
